@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Pagination from '../src/components/Pagination';
+import Pagination from './components/Pagination';
 import Modal from "./components/Modal";
 import "./App.css";
 var friendObj, clonedData;
@@ -33,12 +33,14 @@ const App = () => {
   const searchFriend = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchFriendTerm(value);
+    //Filtering names based on search term
     const searchResults = clonedData.filter(name => name.friendName.toLowerCase().includes(value));
     setMyFriendsList(searchResults);
   };
   
   //fn to search friend based on search term
   function saveStateToLocalStorage(data) {
+    //Maintaining the original records
     clonedData = [...data];
     localStorage.setItem('myFriendsList', JSON.stringify(data));
   };
@@ -70,9 +72,13 @@ const App = () => {
   //Fn to delete friend from the records
   const deleteMyFriend = () => {
     const updatedFriendsList = [...myFriendsList];
+    //Find the index of selected record for delete
     const index = updatedFriendsList.findIndex(f => f.id === friendObj.id);
+    //Removing the entry from the array
     updatedFriendsList.splice(index, 1);
+    //Closing the modal
     hideModal();
+    //Updating friends list
     setMyFriendsList(updatedFriendsList);
     saveStateToLocalStorage(updatedFriendsList);
     alert(`${friendObj.friendName} is now deleted from your friends list.`);
@@ -84,6 +90,7 @@ const App = () => {
     let friendsList = [...myFriendsList];
     const index = friendsList.findIndex(f => f.id === id);
     friendsList[index].isFavorite = !friendsList[index].isFavorite;
+    //Sorting friends list based favorite
     friendsList.sort((x, y) => y.isFavorite - x.isFavorite);
     setMyFriendsList(friendsList);
     saveStateToLocalStorage(friendsList);
@@ -130,7 +137,7 @@ const App = () => {
           type="text"
           name="searchFriend"
           id="searchFriend"
-          placeholder="Search your friend's name"
+          placeholder="Search your friends from here name"
           value={searchFriendTerm}
           onChange={searchFriend}
           autoComplete="off"

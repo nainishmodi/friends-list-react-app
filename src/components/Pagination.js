@@ -1,47 +1,37 @@
-import React from 'react';
+import { useState, useEffect, memo } from 'react';
 
-export default class Pagination extends React.PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = { pager: {} };
-    }
+const Pagination = ({items, onChangePage}) => {
+    //State for pagination
+    const [ pager, setPager ] = useState({});
 
-    componentWillMount() {
+    useEffect(() => {
         // set page if items array isn't empty
-        if (this.props.items && this.props.items.length) {
-            this.setPage(1);
+        if (items && items.length) {
+            setPage(1);
         } else {
             // call change page function in parent component
-            this.props.onChangePage([]);
+            onChangePage([]);
         }
-    }
+    }, []);
 
-    componentDidUpdate(prevProps, prevState) {
-        // reset page if items array has changed
-        if (this.props.items !== prevProps.items) {
-            this.setPage(1);
-        }
-    }
-
-    setPage(page) {
-        const items = this.props.items;
-        let pager = this.state.pager;
-
+    //fn to set page based on the input
+    const setPage = (page) => {
         if (page < 1 || page > pager.totalPages) return;
 
         // get new pager object for specified page
-        pager = this.getPager(items.length, page);
+        const _pager = getPager(items.length, page);
         // get new page of items from items array
-        const pageOfItems = items.slice(pager.startIndex, pager.endIndex + 1);
+        const pageOfItems = items.slice(_pager.startIndex, _pager.endIndex + 1);
 
         // update state
-        this.setState({ pager });
+        setPager(_pager);
 
         // call change page function in parent component
-        this.props.onChangePage(pageOfItems);
-    }
+        onChangePage(pageOfItems);
+    };
 
-    getPager(totalItems, currentPage, pageSize) {
+    //Fn to prepare all the page controls that use by the view
+    const getPager = (totalItems, currentPage, pageSize) => {
         // default to first page
         currentPage = currentPage || 1;
 
@@ -92,25 +82,23 @@ export default class Pagination extends React.PureComponent {
         };
     }
 
-    render() {
-        const pager = this.state.pager;
-        const { pages, currentPage, totalPages } = pager;
+    const { pages, currentPage, totalPages } = pager;
+    // don't display pager if there is only 1 page
+    if (!pages || pages.length <= 1) return null;
 
-        // don't display pager if there is only 1 page
-        if (!pages || pages.length <= 1) return null;
+    return (
+        <>
+            <div className="pagination">
+                <a onClick={() => setPage(1)}>&laquo;</a>
+                <a onClick={() => setPage(currentPage - 1)}>Previous</a>
+                {pages.map((page, index) =>
+                    <a href="" key={index} className={`${currentPage === page && 'active'}`} onClick={() => setPage(page)} href="#">{page}</a>
+                )}
+                <a onClick={() => setPage(currentPage + 1)}>Next</a>
+                <a onClick={() => setPage(totalPages)}>&raquo;</a>
+            </div>
+        </>
+    );
+};
 
-        return (
-            <>
-                <div className="pagination">
-                    <a onClick={() => this.setPage(1)}>&laquo;</a>
-                    <a onClick={() => this.setPage(currentPage - 1)}>Previous</a>
-                    {pages.map((page, index) =>
-                        <a key={index} className={`${currentPage === page && 'active'}`} onClick={() => this.setPage(page)} href="#">{page}</a>
-                    )}
-                    <a onClick={() => this.setPage(currentPage + 1)}>Next</a>
-                    <a onClick={() => this.setPage(totalPages)}>&raquo;</a>
-                </div>
-            </>
-        );
-    }
-}
+export default memo(Pagination);
