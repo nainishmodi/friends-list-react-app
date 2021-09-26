@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Pagination from './components/Pagination';
 import Modal from "./components/Modal";
-import "./App.css";
+import "./FriendsList.css";
 var friendObj, clonedData;
 
 //Funtional component
@@ -145,11 +145,11 @@ const App = () => {
         {pageOfItems.map((f) => {
           return (
             <div key={f.id} className="frd-list-view">
-              <div>
+              <div id="friendInfo">
                 <h5>{f.friendName}</h5>
                 <small>is your friend</small>
               </div>
-              <div>
+              <div id="actions">
                 <i className={`uil uil-star ${f.isFavorite && 'fav-frd'}`} onClick={() => markFriendAsFavorite(f.id)}></i>
                 <i className="uil uil-trash-alt" onClick={() => confirmDelete(f)}></i>
               </div>
