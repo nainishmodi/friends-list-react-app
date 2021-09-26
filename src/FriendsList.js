@@ -157,12 +157,14 @@ const App = () => {
           )
         })}
 
+        {(pageOfItems.length == 0) && <p className="text-center">No friends found.</p>}
+
         <Pagination key={myFriendsList.length} items={myFriendsList} onChangePage={onChangePage}/>
 
         {showConfirm && 
           <Modal hideModal={hideModal}>
               <>
-                <p> Are you sure, you want to delete <strong> {friendObj && friendObj.friendName} </strong> as your friend? </p>
+                <p className="modal-title"> Are you sure, you want to delete <strong>{friendObj && friendObj.friendName}</strong> as your friend? </p>
                 <hr/>
                 <div className="modal-footer">
                   <button type="button" className="primary" onClick={deleteMyFriend}>
@@ -175,7 +177,6 @@ const App = () => {
               </>
           </Modal>
         }
-        {(pageOfItems.length == 0) && <p className="text-center">No friends found.</p>}
       </div>
     </>
   );

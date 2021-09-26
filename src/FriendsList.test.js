@@ -4,6 +4,15 @@ import FriendsList from './FriendsList';
 describe('Friends List App', () => {
   let wrapper;
 
+  // add a div with #modal-area id to the global body
+  const modalRoot = global.document.createElement("div");
+  modalRoot.setAttribute("id", "modal-area");
+  const body = global.document.querySelector("body");
+  body.appendChild(modalRoot);
+
+  //mock fn of window alert
+  window.alert = jest.fn();
+
   beforeAll(() => {
     wrapper = mount( <FriendsList /> );
   });
@@ -37,10 +46,19 @@ describe('Friends List App', () => {
     expect(friendInfo.at(3).text()).toBe('Tony Starc is your friend');
   });
 
-  // test('should able to make friends as favorite.', () => {
-  //   const favoriteElm = wrapper.find('#actions').find('.uil-star').at(2);
-  //   favoriteElm.simulate("click");
-  //   const logSpy = jest.spyOn('markFriendAsFavorite');
-  //   expect(logSpy).toBeCalled();
-  // });
+  test('should able to make friends as favorite.', () => {
+    const favoriteBtnElm = wrapper.find('#actions').find('.uil-star').at(2);
+    favoriteBtnElm.simulate("click");
+    expect(wrapper.find('#friendInfo').at(0).text()).toBe('Peter Parker is your friend');
+  });
+
+  test('should able delete friends from the friends list.', () => {
+    expect(wrapper.exists('.modal-title')).toBe(false);
+    const deleteBtnElm = wrapper.find('#actions').find('.uil-trash-alt').at(2);
+    deleteBtnElm.simulate("click");
+    expect(wrapper.find('.modal-title').text()).toBe(' Are you sure, you want to delete Bruce Wayne  as your friend? ');
+    expect(wrapper.find('.primary').simulate('click'));
+    expect(wrapper.exists('.modal-title')).toBe(false);
+    expect(window.alert).toBeCalledWith("Bruce Wayne  is now deleted from your friends list.");
+  });
 })
